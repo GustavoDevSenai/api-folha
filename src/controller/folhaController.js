@@ -1,10 +1,21 @@
 const Folha = require("../models/Folha")
-
+const folhaService = require("../services/folhaService")
 
 exports.criarFolha = async(req,res) =>{
 
     try {
-        const folha = await Folha.create(req.body)
+
+        const {funcionarioId, salarioBruto} = req.body
+
+        const calculo = folhaService.calcularFolha(salarioBruto)
+
+        const folha = await Folha.create({
+            funcionarioId,
+            salarioBruto,
+            inss: calculo.inss,
+            fgts: calculo.fgts,
+            salarioLiquido: calculo.salarioLiquido
+        })
 
         res.status(201).json(folha)
 
